@@ -1,0 +1,50 @@
+
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>JavaScript get request with parameters example 2</h2>
+
+<p id="demo"></p>
+
+<script>
+var paramaters = 
+{
+  alpha:0.05,
+  duration_column:"a",
+  event_column:"b",
+  treatment:"c",
+  filter:encodeURIComponent('(d=="d"|e=="e")&(f==f)'),
+  start:1990,
+  end:2000,
+  logrank_weighting:"h"
+}
+
+var api_url = `http://localhost/analyses/dddd?alpha=${paramaters.alpha}&duration_column=${paramaters.duration_column}&event_column=${paramaters.event_column}&treatment=${paramaters.treatment}&filter=${paramaters.filter}&start=${paramaters.start}&end=${paramaters.end}&logrank_weighting=${paramaters.logrank_weighting}`;
+
+function call_back_method(some) {
+  
+  document.getElementById("demo").innerHTML = some;
+  console.log(JSON.parse(some));
+}
+
+function get_api_request(myCallback) {
+  let req = new XMLHttpRequest();
+  req.open('GET', api_url);
+  req.onload = function() {
+    if (req.status == 200) {
+      myCallback(this.responseText);
+    } else {
+      myCallback("Error: " + req.status);
+    }
+  }
+  req.send();
+}
+
+get_api_request(call_back_method); 
+</script>
+
+</body>
+</html>
+
