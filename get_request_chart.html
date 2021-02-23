@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<h2>JavaScript get request example with canvasjs chart</h2>
+
+<input id="textbox1" placeholder="X">
+<button onclick="get_statistics()">calculate</button>
+<p id="demo"></p>
+
+<script>
+//############################
+//############################
+//############################
+//canvasjs
+//https://canvasjs.com/html5-javascript-bar-chart/
+//https://canvasjs.com/javascript-charts/chart-index-data-label/
+
+  //############################
+  //############################
+  //############################
+  var paramaters = 
+  {
+    feature_name:"X"
+  }
+var api_url = `http://localhost/feature_name=${paramaters.feature_name}`
+
+
+function call_back_method(some) {
+  document.getElementById("demo").innerHTML = some;
+  console.log(JSON.parse(some));
+  the_data = JSON.parse(some);
+  console.log(the_data["feature"])
+  console.log(the_data["statistics"][paramaters.feature_name])
+  console.log(the_data["statistics"][paramaters.feature_name]["25%"])
+
+  //generate chart
+  //#########################################################
+  //#########################################################
+  //#########################################################
+  //#########################################################
+  var chart = new CanvasJS.Chart("chartContainer", {
+    animationEnabled: true,
+    
+    title:{
+      text:paramaters.feature_name
+    },
+    axisX:{
+      interval: 1
+    },
+    axisY2:{
+      interlacedColor: "rgba(1,77,101,.2)",
+      gridColor: "rgba(1,77,101,.1)",
+      title: "Statistics"
+    },
+    data: [{
+      type: "column",
+      name: "companies",
+      axisYType: "secondary",
+      color: "#014D65",
+      dataPoints: [
+        { y: the_data["statistics"][paramaters.feature_name]["count"] / 1000, label: "Count in thousand" },
+        { y: the_data["statistics"][paramaters.feature_name]["mean"], label: "mean" },
+        { y: the_data["statistics"][paramaters.feature_name]["std"], label: "std" },
+        { y: the_data["statistics"][paramaters.feature_name]["min"], label: "min" },
+        { y: the_data["statistics"][paramaters.feature_name]["25%"], label: "25%" },
+        { y: the_data["statistics"][paramaters.feature_name]["50%"], label: "50%" },
+        { y: the_data["statistics"][paramaters.feature_name]["75%"], label: "75%" },
+        { y: the_data["statistics"][paramaters.feature_name]["max"], label: "max" }
+      ]
+    }]
+  });
+  chart.render();
+}
+
+function get_api_request(myCallback,api_url) {
+  let req = new XMLHttpRequest();
+  req.open('POST', api_url);
+  req.onload = function() {
+    if (req.status == 200) {
+      myCallback(this.responseText);
+    } else {
+      myCallback("Error: " + req.status);
+    }
+  }
+  req.send();
+}
+
+function get_statistics()
+{
+  paramaters.feature_name = document.getElementById("textbox1").value
+  var api_url = `http://localhost/feature_name=${paramaters.feature_name}`
+  console.log("api url",api_url)
+  get_api_request(call_back_method,api_url); 
+}
+</script>
+<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+</body>
+</html>
