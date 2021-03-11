@@ -1,3 +1,1 @@
-# README
-
-API post and get request in vanilla javascript
+# API post and get request using only vanilla javascript
